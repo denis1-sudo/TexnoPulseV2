@@ -76,3 +76,10 @@ export interface DashboardStats {
 	totalUsers: number
 	serverLoad: number
 }
+// новый
+export interface VisitStats {
+  totalVisits: number;      // Всего за все время
+  visitsLastHour: number;   // За последний час
+  visitsLastMonth: number;  // За текущий месяц
+  visitsLastYear: number;   // За текущий год
+}

@@ -7,6 +7,7 @@ import type {
 	Product,
 	QueryParams,
 	TokenResponse,
+	VisitStats,
 	User
 } from '../types'
 import { request } from './api.core'
@@ -105,8 +106,11 @@ export const api = {
 
 	// 7. Админка / Отчеты
 	admin: {
-		// Статистика для дашборда
+		// Статистика для дашборда (общая)
 		getStats: () => request<DashboardStats>('/admin/stats'),
+
+        // НОВЫЙ МЕТОД: Статистика посещений
+        getVisitStats: () => request<VisitStats>('/admin/visits/stats'),
 
 		// Генерация отчетов
 		reports: {
