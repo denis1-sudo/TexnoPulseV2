@@ -53,6 +53,9 @@ router.post('/admin/products', productController.createProduct)
 router.put('/admin/products/:id', productController.updateProduct)
 router.delete('/admin/products/:id', productController.deleteProduct)
 
+
+
+router.get('/admin/visits/stats', visitController.getVisitStats)
 // --- CART & ORDERS ---
 
 
