@@ -183,7 +183,7 @@ const activeMenu = ref('dashboard');
                <!-- Здесь можно добавить цикл v-for по данным истории, если добавите их в API -->
                <div v-for="val in [40, 65, 35, 85, 55, 95, 70]" :key="val" class="group relative w-full flex flex-col justify-end items-center h-full">
                   <div class="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white text-xs py-1 px-2 rounded transition-opacity z-10">{{ val }}%</div>
-                  <div class="w-full max-w-[40px] bg-base-300 rounded-t-sm hover:bg-primary transition-all duration-300 cursor-pointer relative" :style="{ height: val + '%' }"></div>
+                  <div class="w-full max-w-10 bg-base-300 rounded-t-sm hover:bg-primary transition-all duration-300 cursor-pointer relative" :style="{ height: val + '%' }"></div>
                </div>
             </div>
           </div>

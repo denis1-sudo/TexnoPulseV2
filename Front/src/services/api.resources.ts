@@ -105,14 +105,17 @@ export const api = {
 	},
 
 	// 7. Админка / Отчеты
-	admin: {
-		// Статистика для дашборда (общая)
+		admin: {
+		// 1. Общая статистика для дашборда (Выручка, Заказы, Топ товаров и т.д.)
+		getFullDashboardStats: () => request<any>('/admin/dashboard/full'),
+
+		// 2. Отдельная статистика посещений (если нужна где-то еще)
+		getVisitStats: () => request<VisitStats>('/admin/visits/stats'),
+
+		// 3. Старый метод статистики (оставляем для совместимости, если используется)
 		getStats: () => request<DashboardStats>('/admin/stats'),
 
-        // НОВЫЙ МЕТОД: Статистика посещений
-        getVisitStats: () => request<VisitStats>('/admin/visits/stats'),
-
-		// Генерация отчетов
+		// 4. Генерация отчетов
 		reports: {
 			generateMonthly: (year: number, month: number) =>
 				request<Blob>(
@@ -120,5 +123,5 @@ export const api = {
 					'GET'
 				)
 		}
-	}
+	},
 }
