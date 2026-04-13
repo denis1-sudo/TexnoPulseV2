@@ -1,18 +1,48 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:18
-    container_name: pg_database
-    restart: always
+  # Backend service (Node.js)
+  backend:
+    build:
+      context: ./bek-end
+      dockerfile: Dockerfile.backend
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: mydb
-    ports:
-      - '5432:5432'
+      - NODE_ENV=production
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - ./bek-end/uploads:/app/uploads  # если нужно сохранять загрузки
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Frontend build stage (Vue + Vite)
+  frontend-build:
+    build:
+      context: ./Front
+      dockerfile: Dockerfile.frontend.build
+    image: frontend-built:latest
+    volumes:
+      - frontend-dist:/app/dist  # сохраняем собранные файлы в volume
+    networks:
+      - app-network
+
+  # Nginx service (serves frontend + proxies to backend)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - frontend-dist:/usr/share/nginx/html:ro  # монтируем собранный фронтенд
+    depends_on:
+      - backend
+      - frontend-build
+    restart: unless-stopped
+    networks:
+      - app-network
 
 volumes:
-  pg_data:
+  frontend-dist:  # named volume для передачи собранного фронтенда в nginx
+
+networks:
+  app-network:
+    driver: bridge
