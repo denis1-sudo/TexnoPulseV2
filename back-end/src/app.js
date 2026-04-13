@@ -12,7 +12,7 @@ app.use(cors({
 	allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
-app.use('/api', index)
+app.use(index)
 pool.query('SELECT NOW()', (err, res) => {
 	if (err) {
 		console.error('Error connecting to the database', err.stack)
