@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 
 app.use(cors({
-	origin: 'http://localhost:5173', // Или '*' для тестов, но лучше указать конкретный порт Vite
+	origin: 'http://2.26.73.244', // Или '*' для тестов, но лучше указать конкретный порт Vite
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 	allowedHeaders: ['Content-Type', 'Authorization']
 }))
