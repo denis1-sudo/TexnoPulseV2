@@ -17,3 +17,100 @@ ALTER TABLE users RENAME COLUMN password TO password_hash;
 
 
 добавить колонку для роли
+
+
+
+
+
+-- 1. Таблица товаров (Products)
+-- Если таблица уже есть, этот блок можно пропустить или изменить под свои нужды
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,          -- Цена товара
+    old_price DECIMAL(10, 2),               -- Старая цена (для скидки)
+    category VARCHAR(100),
+    thumbnail VARCHAR(255),                 -- Ссылка на миниатюру
+    image VARCHAR(255),                     -- Ссылка на основное фото
+    stock INTEGER DEFAULT 0,                -- Остаток на складе
+    rating DECIMAL(3, 2) DEFAULT 0.0,       -- Рейтинг (например, 4.5)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Таблица корзины (Cart Items)
+-- Связывает пользователя (users.id) с товаром (products.id)
+CREATE TABLE IF NOT EXISTS cart_items (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE, -- Связь с таблицей users
+    product_id INTEGER REFERENCES products(id) ON DELETE CASCADE, -- Связь с таблицей products
+    quantity INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, product_id) -- Чтобы у одного юзера не было двух строк с одним товаром
+);
+
+-- 3. Таблица заказов (Orders)
+CREATE TABLE IF NOT EXISTS orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    total_price DECIMAL(10, 2) NOT NULL,    -- Итоговая сумма заказа
+    status VARCHAR(50) DEFAULT 'pending',   -- pending, paid, shipped, delivered, cancelled
+    address TEXT,                           -- Адрес доставки
+    comment TEXT,                           -- Комментарий к заказу
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Таблица элементов заказа (Order Items)
+-- Фиксирует, какие именно товары вошли в заказ и по какой цене они были куплены
+CREATE TABLE IF NOT EXISTS order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+    product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+    quantity INTEGER NOT NULL,
+    price_at_purchase DECIMAL(10, 2) NOT NULL, -- Цена на момент покупки (важно, если цена товара изменится позже)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- --- ИНДЕКСЫ ДЛЯ УСКОРЕНИЯ (Опционально, но рекомендуется) ---
+CREATE INDEX IF NOT EXISTS idx_cart_user ON cart_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
+
+
+
+-- Добавляем флаг активности (по умолчанию true)
+ALTER TABLE products ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+
+-- Добавляем флаг "популярный/рекомендуемый" (по умолчанию false)
+ALTER TABLE products ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT FALSE;
+
+-- Добавляем бренд (текстовое поле)
+ALTER TABLE products ADD COLUMN IF NOT EXISTS brand VARCHAR(100);
+
+
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    old_price DECIMAL(10, 2),
+    category VARCHAR(100),
+    brand VARCHAR(100),           -- <-- Добавлено
+    thumbnail VARCHAR(255),
+    image VARCHAR(255),
+    stock INTEGER DEFAULT 0,
+    rating DECIMAL(3, 2) DEFAULT 0.0,
+    is_active BOOLEAN DEFAULT TRUE,      -- <-- Добавлено
+    is_featured BOOLEAN DEFAULT FALSE,   -- <-- Добавлено
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS user_activity_log (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL, 
+    ip_address VARCHAR(45),                                  
+    user_agent TEXT,                                         
+    page_url VARCHAR(255),                                   
+    action_type VARCHAR(50) DEFAULT 'view',                  
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP           
+);
