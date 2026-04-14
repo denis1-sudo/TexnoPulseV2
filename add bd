@@ -114,3 +114,5 @@ CREATE TABLE IF NOT EXISTS user_activity_log (
     action_type VARCHAR(50) DEFAULT 'view',                  
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP           
 );
+
+You server has an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'REFERENCES users(id) ON DELETE SET NULL, ip_address VARCHAR(45), user_agent TEXT, ' at line 3
