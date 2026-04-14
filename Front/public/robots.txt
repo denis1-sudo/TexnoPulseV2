@@ -1,0 +1,22 @@
+# robots.txt — TEXNOPULSEV2
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Block admin / API / private routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /uploads/
+Disallow: /back-end/
+Disallow: /*.json$
+
+# Block common bot traps
+Disallow: /cgi-bin/
+Disallow: /tmp/
+
+# Crawl-delay for polite bots
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://texnopulsev2.com/sitemap.xml
