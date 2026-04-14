@@ -1,7 +1,7 @@
 import type { QueryParams } from '../types'
 
 export const API_CONFIG = {
-	baseUrl: 'http://localhost/api',
+	baseUrl: 'http://2.26.0.1/api',
 	timeout: 5000
 }
 export const fetchWithTimeout = async (
